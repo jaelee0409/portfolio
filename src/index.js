@@ -34,7 +34,7 @@ function init() {
 	container = document.getElementById( 'container' );
 
 	camera = new THREE.PerspectiveCamera( 27, window.innerWidth / window.innerHeight, 1, 4000 );
-	camera.position.z = 2750;
+	camera.position.z = 4000;
 
 	scene = new THREE.Scene();
 	clock = new THREE.Clock();
