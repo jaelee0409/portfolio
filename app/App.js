@@ -1,104 +1,85 @@
+'use client'
+
 import * as THREE from 'three'
 import { useEffect, useRef, useState } from 'react'
+import { Canvas, extend, useFrame, useThree } from '@react-three/fiber'
+import { useCursor, MeshPortalMaterial, CameraControls, Gltf, Text } from '@react-three/drei'
 import { useRoute, useLocation } from 'wouter'
-import { Canvas, useFrame } from '@react-three/fiber'
-import { useCursor, MeshReflectorMaterial, Image, Text, Environment } from '@react-three/drei'
-import { easing } from 'maath'
-import getUuid from 'uuid-by-string'
+import { easing, geometry } from 'maath'
 
-const GOLDENRATIO = 1.61803398875
+extend(geometry)
 
-export const App = ({ images }) => (
-    <Canvas dpr={[1, 1.5]} camera={{ fov: 70, position: [0, 2, 15] }}>
-        <color attach="background" args={['#191920']} />
-        <fog attach="fog" args={['#191920', 0, 15]} />
+// TODO: 
 
-        <group position={[0, -0.5, 0]}>
-            <Frames images={images} />
-            <mesh rotation={[-Math.PI / 2, 0, 0]}>
-                <planeGeometry args={[50, 50]} />
-                <MeshReflectorMaterial
-                blur={[300, 100]}
-                resolution={2048}
-                mixBlur={1}
-                mixStrength={80}
-                roughness={1}
-                depthScale={1.2}
-                minDepthThreshold={0.4}
-                maxDepthThreshold={1.4}
-                color="#050505"
-                metalness={0.5}
-            />
-                </mesh>
-            </group>
-            <Environment preset="city" />
-        </Canvas>
+export const App = () => (
+  <Canvas camera={{ fov: 75, position: [0, 0, 20] }}>
+    <color attach="background" args={['#f0f0f0']} />
+    <Frame id="01" name='01' author="Omar Faruq Tawsif" bg="#e4cdac" position={[-2.1, 0, 0.75]} rotation={[0, 0.75, 0]}>
+    </Frame>
+    <Frame id="02" name='02' author="Omar Faruq Tawsif" bg="#e4cdac" position={[-1.15, 0, 0]} rotation={[0, 0.5, 0]}>
+      <Gltf src="pickles_3d_version_of_hyuna_lees_illustration-transformed.glb" scale={8} position={[0, -0.7, -2]} />
+    </Frame>
+    <Frame id="03" name="tea" author="Omar Faruq Tawsif" position={[0, 0, -0.25]}>
+        <Gltf src="fiesta_tea-transformed.glb" position={[0, -2, -3]} />
+    </Frame>
+    <Frame id="04" name="04" author="Omar Faruq Tawsif" bg="#d1d1ca" position={[1.15, 0, 0]} rotation={[0, -0.5, 0]}>
+        <Gltf src="still_life_based_on_heathers_artwork-transformed.glb" scale={2} position={[0, -0.8, -4]} />
+    </Frame>
+    <Frame id="05" name='05' author="Omar Faruq Tawsif" bg="#e4cdac" position={[2.1, 0, 0.75]} rotation={[0, -0.75, 0]}>
+        <Gltf src="stone-transformed.glb" position={[15, -15, 15]} />
+    </Frame>
+    <Rig />
+  </Canvas>
 )
 
-function Frames({ images, q = new THREE.Quaternion(), p = new THREE.Vector3() }) {
-  const ref = useRef()
-  const clicked = useRef()
-  const [, params] = useRoute('/:id')
+function Frame({ id, name, author, bg, width = 1, height = 1.61803398875, children, ...props }) {
+  const portal = useRef()
   const [, setLocation] = useLocation()
-  useEffect(() => {
-    clicked.current = ref.current.getObjectByName(params?.id)
-    if (clicked.current) {
-      clicked.current.parent.updateWorldMatrix(true, true)
-      clicked.current.parent.localToWorld(p.set(0, GOLDENRATIO / 2, 1.25))
-      clicked.current.parent.getWorldQuaternion(q)
-    } else {
-      p.set(0, 0, 5.5)
-      q.identity()
-    }
-  })
-  useFrame((state, dt) => {
-    easing.damp3(state.camera.position, p, 0.4, dt)
-    easing.dampQ(state.camera.quaternion, q, 0.4, dt)
-  })
+  const [, params] = useRoute('/:id')
+  const [hovered, hover] = useState(false)
+
+  useCursor(hovered)
+  useFrame((state, dt) => easing.damp(portal.current, 'blend', params?.id === id ? 1 : 0, 0.2, dt))
+
   return (
-    <group
-      ref={ref}
-      onClick={(e) => (e.stopPropagation(), setLocation(clicked.current === e.object ? '/' : '/' + e.object.name))}
-      onPointerMissed={() => setLocation('/')}>
-      {images.map((props) => <Frame key={props.url} {...props} />)}
+    <group {...props}>
+      <Text fontSize={0.1} anchorY="top" position={[0.0, 0.715, 0.01]} color={'#ffffff'} material-toneMapped={false}>
+        {name}
+      </Text>
+      {/*
+      <Text fontSize={0.1} anchorX="right" position={[0.4, -0.659, 0.01]} material-toneMapped={false}>
+        /{id}
+      </Text>
+      */}
+      {/*
+      <Text fontSize={0.04} anchorX="right" position={[0.0, -0.677, 0.01]} material-toneMapped={false}>
+        {author}
+      </Text>
+      */}
+      <mesh name={id} onDoubleClick={(e) => (e.stopPropagation(), setLocation('/' + e.object.name))} onPointerOver={(e) => hover(true)} onPointerOut={() => hover(false)}>
+        <roundedPlaneGeometry args={[width, height, 0.1]} />
+        <MeshPortalMaterial ref={portal} events={params?.id === id} side={THREE.DoubleSide}>
+          <color attach="background" args={[bg]} />
+          {children}
+        </MeshPortalMaterial>
+      </mesh>
     </group>
   )
 }
 
-function Frame({ url, c = new THREE.Color(), ...props }) {
-  const image = useRef()
-  const frame = useRef()
-  const [, params] = useRoute('/item/:id')
-  const [hovered, hover] = useState(false)
-  const [rnd] = useState(() => Math.random())
-  const name = getUuid(url)
-  const isActive = params?.id === name
-  useCursor(hovered)
-  useFrame((state, dt) => {
-    image.current.material.zoom = 1.5 + Math.sin(rnd * 10000 + state.clock.elapsedTime / 3) / 2
-    easing.damp3(image.current.scale, [0.85 * (!isActive && hovered ? 0.85 : 1), 0.9 * (!isActive && hovered ? 0.905 : 1), 1], 0.1, dt)
-    easing.dampC(frame.current.material.color, hovered ? '#050505' : '#151515', 0.1, dt)
+function Rig({ position = new THREE.Vector3(0, 0, 5), focus = new THREE.Vector3(0, 0, 0) }) {
+  const { controls, scene } = useThree()
+  const [, params] = useRoute('/:id')
+
+  useEffect(() => {
+    const active = scene.getObjectByName(params?.id)
+    if (active) {
+      active.parent.localToWorld(position.set(0, 0.5, 0.25))
+      active.parent.localToWorld(focus.set(0, 0, -2))
+    }
+    controls?.setLookAt(...position.toArray(), ...focus.toArray(), true)
   })
-  return (
-    <group {...props}>
-      <mesh
-        name={name}
-        onPointerOver={(e) => (e.stopPropagation(), hover(true))}
-        onPointerOut={() => hover(false)}
-        scale={[1, GOLDENRATIO, 0.05]}
-        position={[0, GOLDENRATIO / 2, 0]}>
-        <boxGeometry />
-        <meshStandardMaterial color="#151515" metalness={0.5} roughness={0.5} envMapIntensity={2} />
-        <mesh ref={frame} raycast={() => null} scale={[0.9, 0.93, 0.9]} position={[0, 0, 0.2]}>
-          <boxGeometry />
-          <meshBasicMaterial toneMapped={false} fog={false} />
-        </mesh>
-        <Image raycast={() => null} ref={image} position={[0, 0, 0.7]} url={url} />
-      </mesh>
-      <Text maxWidth={0.1} anchorX="left" anchorY="top" position={[0.55, GOLDENRATIO, 0]} fontSize={0.025}>
-        {name.split('-').join(' ')}
-      </Text>
-    </group>
-  )
+
+    return <CameraControls makeDefault minPolarAngle={0} maxPolarAngle={Math.PI / 2} minAzimuthAngle={-Math.PI / 4} maxAzimuthAngle={Math.PI / 4} />
 }
 
