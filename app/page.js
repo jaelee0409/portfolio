@@ -1,12 +1,12 @@
 'use client'
 
 import { App } from './App'
-import { useRoute, useLocation } from 'wouter'
+// import { useRoute, useLocation } from 'wouter'
 
 export default function Home() {
 
-    const [, params] = useRoute('/')
-    const [, setLocation] = useLocation()
+    // const [, params] = useRoute('/')
+    // const [, setLocation] = useLocation()
 
     return (
         <>
