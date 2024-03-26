@@ -1,6 +1,7 @@
 'use client'
 
 import * as THREE from 'three'
+import * as RAPIER from '@dimforge/rapier3d-compat'
 import { useEffect, useRef, useState } from 'react'
 import { Canvas, extend, useFrame, useThree } from '@react-three/fiber'
 import { useCursor, MeshPortalMaterial, CameraControls, Gltf, Text } from '@react-three/drei'
