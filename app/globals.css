@@ -20,6 +20,7 @@ body,
 /* } */
 
 body {
+  overflow: hidden;
   overscroll-behavior: none;
   background: #151515;
   color: #a0a0a0;
