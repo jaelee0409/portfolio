@@ -2,6 +2,7 @@
   "name": "portfolio",
   "version": "0.1.0",
   "private": true,
+  "main": "app/page.js",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -19,12 +20,13 @@
     "leva": "^0.9.35",
     "maath": "^0.10.7",
     "matter-js": "^0.19.0",
-    "next": "14.1.4",
+    "next": "^14.3.0-canary.28",
     "react": "^18",
     "react-dom": "^18",
     "three": "^0.162.0",
     "three-stdlib": "^2.29.6",
     "uuid-by-string": "^4.0.0",
+    "valtio": "^1.13.2",
     "wouter": "^3.1.0"
   },
   "devDependencies": {
