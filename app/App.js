@@ -11,7 +11,7 @@ const material = new THREE.LineBasicMaterial({ color: 'white' })
 const geometry = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(0, -0.5, 0), new THREE.Vector3(0, 0.5, 0)])
 const state = proxy({
   clicked: null,
-  urls: ["nana.png", "nana.png", "1.jpg", "2.jpg", "3.jpg", "4.jpg", "5.jpg", "6.jpg", "7.jpg", "8.jpg", "9.jpg", "10.jpg", "11.jpg", "12.jpg"]
+  urls: ["nana.png", "1.jpg", "2.jpg", "3.jpg", "4.jpg", "5.jpg", "6.jpg", "7.jpg", "8.jpg", "9.jpg", "10.jpg", "11.jpg", "12.jpg"]
 })
 
 function Minimap() {
@@ -57,7 +57,7 @@ function Item({ index, position, scale, c = new THREE.Color(), ...props }) {
     easing.damp(ref.current.material, 'grayscale', hovered || clicked === index ? 0 : Math.max(0, 1 - y), 0.15, delta)
     easing.dampC(ref.current.material.color, hovered || clicked === index ? 'white' : '#aaa', hovered ? 0.3 : 0.15, delta)
   })
-  return <Image ref={ref} {...props} position={position} scale={scale} onClick={click} onPointerOver={over} onPointerOut={out} />
+    return <Image ref={ref} {...props} unoptimized={true} position={position} scale={scale} onClick={click} onPointerOver={over} onPointerOut={out} />
 }
 
 function Items({ w = 0.7, gap = 0.15 }) {
@@ -75,9 +75,14 @@ function Items({ w = 0.7, gap = 0.15 }) {
 }
 
 export const App = () => (
-  <Canvas gl={{ antialias: false }} dpr={[1, 1.5]} onPointerMissed={() => (state.clicked = null)}>
-    <Items />
-  </Canvas>
+    <>
+    <div style={{ marginTop: '5px', textAlign: 'center' }}>
+        <a href="/">GO</a>
+    </div>
+    <Canvas gl={{ antialias: false }} dpr={[1, 1.5]} onPointerMissed={() => (state.clicked = null)}>
+        <Items />
+    </Canvas>
+    </>
 )
 
 // import * as THREE from 'three'
