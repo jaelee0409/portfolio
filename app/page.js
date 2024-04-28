@@ -1,38 +1,17 @@
 'use client'
 
-// import { App } from './App'
-// import Link from 'next/link'
-// import { usePathname } from 'next/navigation'
-
-// export default function Home() {
-    
-//     const pathname = usePathname()
-
-//     return (
-//         <>
-//             <App />
-//             <div id="link" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}>
-//             <div style={{ position: 'absolute', bottom: 40, right: 40, fontSize: '13px' }}>Jae Seong Lee</div>
-//             <Link style={{ position: 'absolute', top: 40, left: 40, fontSize: '13px' }} href="/">
-//                 {pathname === '/' ? 'double click to enter portal' : '< back'}
-//             </Link>
-//             </div>
-//         </>
-//     );
-// }
-
 import { createRoot } from 'react-dom/client'
 import { Suspense } from 'react'
 import { App } from './App'
 
 function Overlay() {
   return (
-    <div style={{ position: 'absolute', top: 0, left: 0, pointerEvents: 'none', width: '100%', height: '100%' }}>
-      <div style={{ position: 'absolute', bottom: 40, left: 90, fontSize: '13px' }}>
+    <div id="link" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}>
+      <div style={{ position: 'absolute', bottom: '3%', left: '5%', fontSize: '13px' }}>
         jae seong lee / software developer
       </div>
-      <a href="/" style={{ position: 'absolute', top: 40, left: 40, fontSize: '13px' }}>3D —</a>
-      <div style={{ position: 'absolute', bottom: 40, right: 40, fontSize: '13px' }}>04/27/2024</div>
+      <a href="/3d" style={{ position: 'absolute', top: '5%', left: '5%', fontSize: '13px' }}>3D —&gt;</a>
+      <div style={{ position: 'absolute', bottom: '3%', right: '5%', fontSize: '13px' }}>04/28/2024</div>
     </div>
   )
 }
@@ -44,7 +23,6 @@ export default function Home() {
             <App />
         </Suspense>
         <Overlay />
-
         </>
     )
 }

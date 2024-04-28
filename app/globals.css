@@ -15,9 +15,25 @@ body,
     padding: 0;
 }
 
-/* #link { */
-/*     pointer-events: none; */
-/* } */
+#link {
+    pointer-events: none;
+}
+
+.clicked-link {
+    color: #548ecb;
+    text-align: center;
+}
+
+.unclicked-link {
+    color: grey;
+    cursor: default;
+    pointer-events: none;
+    text-align: center;
+
+    &:hover {
+        text-decoration: none;
+    }
+}
 
 body {
   overflow: hidden;
